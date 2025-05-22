@@ -8,6 +8,11 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+      };
+    </script>
     <link
       href="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.css"
       rel="stylesheet"
@@ -22,6 +27,18 @@
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
       }
+      /* Hide number input arrows (Chrome, Safari, Edge) */
+      input[type="number"]::-webkit-inner-spin-button,
+      input[type="number"]::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      /* Firefox */
+      input[type="number"] {
+        -moz-appearance: textfield; /* Firefox */
+        appearance: textfield; /* Standard */
+      }
     </style>
   </head>
   <body>
@@ -34,7 +51,8 @@
         return React.createElement(
           "svg",
           {
-            className: "mx-auto h-12 w-12 text-indigo-600 mb-3",
+            className:
+              "mx-auto h-12 w-12 text-indigo-600 dark:text-indigo-400 mb-3",
             fill: "none",
             stroke: "currentColor",
             strokeWidth: "2",
@@ -68,7 +86,7 @@
         return React.createElement(
           "svg",
           {
-            className: "h-8 w-8 text-gray-400",
+            className: "h-8 w-8 text-gray-400 dark:text-gray-500",
             fill: "none",
             stroke: "currentColor",
             strokeWidth: "2",
@@ -90,7 +108,7 @@
         return React.createElement(
           "svg",
           {
-            className: "h-8 w-8 text-indigo-600",
+            className: "h-8 w-8 text-indigo-600 dark:text-indigo-400",
             fill: "none",
             stroke: "currentColor",
             strokeWidth: "2",
@@ -108,12 +126,81 @@
         );
       }
 
+      function MoonIcon() {
+        return React.createElement(
+          "svg",
+          {
+            className: "h-5 w-5",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            viewBox: "0 0 24 24",
+          },
+          React.createElement("path", {
+            d: "M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z",
+          })
+        );
+      }
+
+      function SunIcon() {
+        return React.createElement(
+          "svg",
+          {
+            className: "h-5 w-5",
+            fill: "none",
+            stroke: "currentColor",
+            strokeWidth: "2",
+            viewBox: "0 0 24 24",
+          },
+          React.createElement("circle", { cx: "12", cy: "12", r: "5" }),
+          React.createElement("line", { x1: "12", y1: "1", x2: "12", y2: "3" }),
+          React.createElement("line", {
+            x1: "12",
+            y1: "21",
+            x2: "12",
+            y2: "23",
+          }),
+          React.createElement("line", {
+            x1: "4.22",
+            y1: "4.22",
+            x2: "5.64",
+            y2: "5.64",
+          }),
+          React.createElement("line", {
+            x1: "18.36",
+            y1: "18.36",
+            x2: "19.78",
+            y2: "19.78",
+          }),
+          React.createElement("line", { x1: "1", y1: "12", x2: "3", y2: "12" }),
+          React.createElement("line", {
+            x1: "21",
+            y1: "12",
+            x2: "23",
+            y2: "12",
+          }),
+          React.createElement("line", {
+            x1: "4.22",
+            y1: "19.78",
+            x2: "5.64",
+            y2: "18.36",
+          }),
+          React.createElement("line", {
+            x1: "18.36",
+            y1: "5.64",
+            x2: "19.78",
+            y2: "4.22",
+          })
+        );
+      }
+
       function AudiobookProgressTracker() {
         const [totalHours, setTotalHours] = useState("");
         const [totalMinutes, setTotalMinutes] = useState("");
         const [inputHours, setInputHours] = useState("");
         const [inputMinutes, setInputMinutes] = useState("");
         const [isCompletedMode, setIsCompletedMode] = useState(true);
+        const [isDarkMode, setIsDarkMode] = useState(false);
 
         const [results, setResults] = useState({
           percentage: 0,
@@ -121,6 +208,34 @@
           remainingTime: { hours: 0, minutes: 0 },
           totalMinutes: 0,
         });
+
+        // Check for saved dark mode preference or system preference
+        useEffect(() => {
+          const savedTheme = localStorage.getItem("darkMode");
+          const systemPrefersDark = window.matchMedia(
+            "(prefers-color-scheme: dark)"
+          ).matches;
+
+          if (savedTheme === "true" || (!savedTheme && systemPrefersDark)) {
+            setIsDarkMode(true);
+            document.documentElement.classList.add("dark");
+          } else {
+            setIsDarkMode(false);
+            document.documentElement.classList.remove("dark");
+          }
+        }, []);
+
+        const toggleDarkMode = () => {
+          const newDarkMode = !isDarkMode;
+          setIsDarkMode(newDarkMode);
+          localStorage.setItem("darkMode", newDarkMode.toString());
+
+          if (newDarkMode) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        };
 
         const timeToMinutes = (hours, minutes) => {
           return (parseInt(hours) || 0) * 60 + (parseInt(minutes) || 0);
@@ -175,20 +290,31 @@
         const progressBarWidth = Math.min(results.percentage, 100);
 
         return (
-          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-            <div className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-6 space-y-6">
+          <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-700 p-4 flex items-center justify-center">
+            <div className="w-full max-w-md bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 space-y-6">
+              {/* Dark Mode Toggle */}
+              <div className="flex justify-end">
+                <button
+                  onClick={toggleDarkMode}
+                  className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  aria-label="Toggle dark mode"
+                >
+                  {isDarkMode ? <SunIcon /> : <MoonIcon />}
+                </button>
+              </div>
+
               <div className="text-center">
                 <BookOpenIcon />
-                <h1 className="text-2xl font-bold text-gray-800 mb-2">
+                <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-2">
                   Audiobook Progress
                 </h1>
-                <p className="text-gray-600 text-sm">
+                <p className="text-gray-600 dark:text-gray-300 text-sm">
                   Track your listening progress
                 </p>
               </div>
 
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   <ClockIcon />
                   Total Audiobook Time
                 </label>
@@ -200,9 +326,9 @@
                       min="0"
                       value={totalHours}
                       onChange={(e) => setTotalHours(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
                     />
-                    <span className="text-xs text-gray-500 block text-center mt-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">
                       Hours
                     </span>
                   </div>
@@ -214,40 +340,40 @@
                       max="59"
                       value={totalMinutes}
                       onChange={(e) => setTotalMinutes(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
                     />
-                    <span className="text-xs text-gray-500 block text-center mt-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">
                       Minutes
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-center space-x-3 py-2">
-                <span
-                  className={`text-sm font-medium ${
-                    isCompletedMode ? "text-indigo-600" : "text-gray-500"
+              <div className="flex justify-center gap-4 py-2">
+                <button
+                  onClick={() => setIsCompletedMode(true)}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                    isCompletedMode
+                      ? "bg-green-700 text-white border-green-700"
+                      : "bg-transparent text-green-600 dark:text-green-400 border-green-600 dark:border-green-400 hover:bg-green-800 hover:text-white"
                   }`}
                 >
                   Completed
-                </span>
-                <button
-                  onClick={() => setIsCompletedMode(!isCompletedMode)}
-                  className="focus:outline-none"
-                >
-                  {isCompletedMode ? <ToggleRightIcon /> : <ToggleLeftIcon />}
                 </button>
-                <span
-                  className={`text-sm font-medium ${
-                    !isCompletedMode ? "text-indigo-600" : "text-gray-500"
+                <button
+                  onClick={() => setIsCompletedMode(false)}
+                  className={`px-4 py-2 rounded-lg text-sm font-semibold border transition-colors ${
+                    !isCompletedMode
+                      ? "bg-orange-700 text-white border-orange-700"
+                      : "bg-transparent text-orange-600 dark:text-orange-400 border-orange-600 dark:border-orange-400 hover:bg-orange-800 hover:text-white"
                   }`}
                 >
                   Remaining
-                </span>
+                </button>
               </div>
 
               <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                   Time {isCompletedMode ? "Completed" : "Remaining"}
                 </label>
                 <div className="flex space-x-2">
@@ -258,9 +384,9 @@
                       min="0"
                       value={inputHours}
                       onChange={(e) => setInputHours(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
                     />
-                    <span className="text-xs text-gray-500 block text-center mt-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">
                       Hours
                     </span>
                   </div>
@@ -272,9 +398,9 @@
                       max="59"
                       value={inputMinutes}
                       onChange={(e) => setInputMinutes(e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-center"
                     />
-                    <span className="text-xs text-gray-500 block text-center mt-1">
+                    <span className="text-xs text-gray-500 dark:text-gray-400 block text-center mt-1">
                       Minutes
                     </span>
                   </div>
@@ -282,45 +408,51 @@
               </div>
 
               {results.totalMinutes > 0 && (
-                <div className="space-y-4 pt-4 border-t border-gray-200">
+                <div className="space-y-4 pt-4 border-t border-gray-200 dark:border-gray-600">
                   <div className="text-center">
-                    <div className="text-4xl font-bold text-indigo-600 mb-1">
+                    <div className="text-4xl font-bold text-indigo-600 dark:text-indigo-400 mb-1">
                       {results.percentage}%
                     </div>
-                    <div className="text-sm text-gray-600">Complete</div>
+                    <div className="text-sm text-gray-600 dark:text-gray-300">
+                      Complete
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex justify-between text-xs text-gray-500">
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400">
                       <span>0%</span>
                       <span>100%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div className="w-full bg-gray-200 dark:bg-gray-600 rounded-full h-4 overflow-hidden">
                       <div
-                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full transition-all duration-500 ease-out"
+                        className="h-full bg-gradient-to-r from-indigo-500 to-purple-600 dark:from-indigo-400 dark:to-purple-500 rounded-full transition-all duration-500 ease-out"
                         style={{ width: `${progressBarWidth}%` }}
                       ></div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4 pt-2">
-                    <div className="text-center p-3 bg-green-50 rounded-lg">
-                      <div className="text-lg font-semibold text-green-700">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+                    <div className="text-center p-3 bg-green-50 dark:bg-green-900/30 rounded-lg">
+                      <div className="text-lg font-semibold text-green-700 dark:text-green-400">
                         {formatTime(
                           results.completedTime.hours,
                           results.completedTime.minutes
                         )}
                       </div>
-                      <div className="text-xs text-green-600">Completed</div>
+                      <div className="text-xs text-green-600 dark:text-green-500">
+                        Completed
+                      </div>
                     </div>
-                    <div className="text-center p-3 bg-orange-50 rounded-lg">
-                      <div className="text-lg font-semibold text-orange-700">
+                    <div className="text-center p-3 bg-orange-50 dark:bg-orange-900/30 rounded-lg">
+                      <div className="text-lg font-semibold text-orange-700 dark:text-orange-400">
                         {formatTime(
                           results.remainingTime.hours,
                           results.remainingTime.minutes
                         )}
                       </div>
-                      <div className="text-xs text-orange-600">Remaining</div>
+                      <div className="text-xs text-orange-600 dark:text-orange-500">
+                        Remaining
+                      </div>
                     </div>
                   </div>
                 </div>
