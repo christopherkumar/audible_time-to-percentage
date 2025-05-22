@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Character encoding and responsive settings -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+  <!-- Page title -->
+  <title>Progress Calculator</title>
+
+  <!-- Google Fonts import (Montserrat and others) -->
+  <link href="https://fonts.googleapis.com/css2?family=Anybody:ital,wdth,wght@0,107.4,100..900;1,107.4,100..900&family=Corben:wght@400;700&family=Lexend+Deca:wght@100..900&family=Montserrat:wght@300&family=Noto+Sans+Warang+Citi&family=Poiret+One&family=Prompt:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Main stylesheet -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body>
+  <!-- Main container for layout -->
+  <div class="container">
+
+    <!-- Left panel: input form for time values -->
+    <div class="form-wrapper expanded" id="formWrapper">
+      <form id="progressForm">
+        <!-- Form title -->
+        <h2>Time Remaining/Completed to Percentage</h2>
+
+        <!-- Input for total time -->
+        <label>Total Time:</label>
+        <input type="number" id="totalHours" placeholder="Hours" min="0"/>
+        <input type="number" id="totalMinutes" placeholder="Minutes" min="0" max="59"/>
+
+        <!-- Mode toggle buttons -->
+        <div class="toggle-buttons">
+          <button type="button" id="completedBtn" class="active">Completed</button>
+          <button type="button" id="remainingBtn">Remaining</button>
+        </div>
+
+        <!-- Input for completed or remaining time -->
+        <label id="inputLabel">Completed Time:</label>
+        <input type="number" id="inputHours" placeholder="Hours" min="0"/>
+        <input type="number" id="inputMinutes" placeholder="Minutes" min="0" max="59"/>
+
+        <!-- Submit button -->
+        <button type="submit">Calculate</button>
+      </form>
+    </div>
+
+    <!-- (Optional) Expand button — currently hidden -->
+    <button id="expandBtn" class="drawer-toggle" title="Expand" style="display: none;">&#xbb;</button>
+
+    <!-- Right panel: progress ring display -->
+    <div class="ring-container" id="ringSection">
+      <div class="ring-wrapper">
+        <!-- SVG ring with 3 layers: background, completed, remaining -->
+        <svg class="progress-ring" width="150" height="150">
+          <circle class="track" r="65" cx="75" cy="75" />
+          <circle class="completed" r="65" cx="75" cy="75" />
+          <circle class="remaining" r="65" cx="75" cy="75" />
+        </svg>
+
+        <!-- Percent text in center of ring -->
+        <span id="percentText" class="ring-percent">0%</span>
+      </div>
+
+      <!-- Time display under the ring -->
+      <div class="stat-display" id="timeDisplay"></div>
+    </div>
+
+  </div>
+
+  <!-- Main JavaScript logic -->
+  <script src="script.js"></script>
+
+  <!-- Custom alert popup for errors -->
+  <div id="alertBox" class="alert-box hidden">Input time cannot be more than total time.</div>
+</body>
+</html>
