@@ -6,7 +6,7 @@ This is a lightweight web tool to convert your Audible listening time into a per
 ## Local Development
 
 1. Clone the repository
-2. Open `index.html` in a modern web browser
+2. Open `index.html`
 3. Or serve using a local server:
    ```bash
    # Python
