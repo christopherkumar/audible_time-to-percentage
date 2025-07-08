@@ -1,8 +1,8 @@
-# Audible Time to Percentage Converter
+# Track My Audiobook
 
 This is a lightweight web tool to convert your Audible listening time into a percentage. It’s useful for updating progress on platforms like Goodreads, StoryGraph, or personal reading trackers.
 
-**Live site:** [Audiobook Progress Tracker](https://audible-time-to-percentage.netlify.app)
+**Live site:** [Audiobook Progress Tracker](http://trackmyaudiobook.com/)
 ## Local Development
 
 1. Clone the repository
